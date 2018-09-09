@@ -1,4 +1,5 @@
 import React from "react";
+import countries from "country-list";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
@@ -49,8 +50,14 @@ class Form extends React.Component {
     });
   };
 
+  makeCalendar() {
+    console.log(this.state);
+  }
+
   render() {
     const { classes } = this.props;
+    const validCodes = countries().getCodes();
+
     return (
       <div className={classes.layout}>
         <Paper className={classes.paper}>
@@ -80,6 +87,14 @@ class Form extends React.Component {
                   onChange={this.handleChange("daysLength")}
                 />
               </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Country Code"
+                  value={this.state.countryCode}
+                  className={classes.field}
+                  onChange={this.handleChange("countryCode")}
+                />
+              </Grid>
             </Grid>
             <Grid
               container
@@ -91,6 +106,13 @@ class Form extends React.Component {
                 variant="contained"
                 color="primary"
                 className={classes.button}
+                onClick={() => {
+                  if (
+                    validCodes.indexOf(this.state.countryCode.toUpperCase()) > -1
+                  ) {
+                    return this.makeCalendar();
+                  } else console.log("I need to handle error");
+                }}
               >
                 {/* if calendar is already present, update calendar */}
                 View Calendar
