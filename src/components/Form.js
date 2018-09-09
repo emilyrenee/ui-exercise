@@ -1,5 +1,6 @@
 import React from "react";
 import countries from "country-list";
+import moment from "moment";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
@@ -39,9 +40,13 @@ const styles = theme => ({
 
 class Form extends React.Component {
   state = {
-    startDate: "",
+    startDate: moment().format("YYYY-MM-DD"),
+    endDate: "",
     daysLength: 0,
-    countryCode: ""
+    countryCode: "",
+    calendarOn: false,
+    daysViewing: [],
+    showError: false
   };
 
   handleChange = name => event => {
@@ -50,12 +55,42 @@ class Form extends React.Component {
     });
   };
 
+  getDays = () => {
+    const { startDate, endDate, daysLength } = this.state;
+    const daysViewing = new Array(daysLength).fill();
+    for (
+      let i = moment(startDate);
+      i < moment(endDate);
+      i = moment(i).add(1, "day")
+    ) {
+      daysViewing.push(i.calendar());
+    }
+    return this.setState({ daysViewing });
+  };
+
+  toggleCalendar() {
+    this.setState({ calendarOn: !this.state.calendarOn });
+  }
+
   makeCalendar() {
-    console.log(this.state);
+    const { startDate, daysLength } = this.state;
+    const endDate = moment(startDate)
+      .add(daysLength, "days")
+      .format("YYYY-MM-DD");
+    this.setState({ endDate }, () => {
+      this.getDays();
+    });
   }
 
   render() {
     const { classes } = this.props;
+    const {
+      startDate,
+      daysLength,
+      countryCode,
+      calendarOn,
+      showError
+    } = this.state;
     const validCodes = countries().getCodes();
 
     return (
@@ -70,7 +105,7 @@ class Form extends React.Component {
                 <TextField
                   label="Start"
                   type="date"
-                  defaultValue="2018-09-05"
+                  defaultValue={startDate}
                   className={classes.field}
                   InputLabelProps={{
                     shrink: true
@@ -82,7 +117,7 @@ class Form extends React.Component {
                 <TextField
                   label="Number of days"
                   type="number"
-                  value={this.state.daysLength}
+                  value={daysLength}
                   className={classes.field}
                   onChange={this.handleChange("daysLength")}
                 />
@@ -90,7 +125,7 @@ class Form extends React.Component {
               <Grid item xs={12}>
                 <TextField
                   label="Country Code"
-                  value={this.state.countryCode}
+                  value={countryCode}
                   className={classes.field}
                   onChange={this.handleChange("countryCode")}
                 />
@@ -107,11 +142,14 @@ class Form extends React.Component {
                 color="primary"
                 className={classes.button}
                 onClick={() => {
-                  if (
-                    validCodes.indexOf(this.state.countryCode.toUpperCase()) > -1
-                  ) {
+                  if (validCodes.indexOf(countryCode.toUpperCase()) > -1) {
+                    if (!calendarOn) this.toggleCalendar();
+                    if (showError) this.setState({ showError: false });
                     return this.makeCalendar();
-                  } else console.log("I need to handle error");
+                  } else {
+                    if (calendarOn) this.toggleCalendar();
+                    return this.setState({ showError: true });
+                  }
                 }}
               >
                 {/* if calendar is already present, update calendar */}
@@ -119,6 +157,8 @@ class Form extends React.Component {
               </Button>
             </Grid>
           </form>
+          {!!calendarOn && <div>Hello, calendar!</div>}
+          {!!showError && <div>Please enter a valid country code.</div>}
         </Paper>
       </div>
     );
