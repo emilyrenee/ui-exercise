@@ -56,14 +56,14 @@ class Form extends React.Component {
   };
 
   getDays = () => {
-    const { startDate, endDate, daysLength } = this.state;
-    const daysViewing = new Array(daysLength).fill();
+    const { startDate, endDate } = this.state;
+    const daysViewing = [];
     for (
       let i = moment(startDate);
       i < moment(endDate);
       i = moment(i).add(1, "day")
     ) {
-      daysViewing.push(i.calendar());
+      daysViewing.push(i);
     }
     return this.setState({ daysViewing });
   };
@@ -89,6 +89,7 @@ class Form extends React.Component {
       daysLength,
       countryCode,
       calendarOn,
+      daysViewing,
       showError
     } = this.state;
     const validCodes = countries().getCodes();
@@ -157,7 +158,14 @@ class Form extends React.Component {
               </Button>
             </Grid>
           </form>
-          {!!calendarOn && <div>Hello, calendar!</div>}
+          {!!calendarOn &&
+            daysViewing.map(day => {
+              // gonna have to return it by months??
+              return <div>
+                Hello, moment({moment(day).calendar()});
+              </div>
+            })
+          }
           {!!showError && <div>Please enter a valid country code.</div>}
         </Paper>
       </div>
