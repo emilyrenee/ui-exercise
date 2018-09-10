@@ -8,6 +8,8 @@ import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 
+import Day from "./calendar/Day";
+
 const styles = theme => ({
   layout: {
     width: "auto",
@@ -35,6 +37,12 @@ const styles = theme => ({
   field: {
     margin: theme.spacing.unit,
     width: 300
+  },
+  button: {
+    marginTop: "3rem"
+  },
+  calendar: {
+    marginTop: "2rem"
   }
 });
 
@@ -46,6 +54,7 @@ class Form extends React.Component {
     countryCode: "",
     calendarOn: false,
     daysViewing: [],
+    months: [],
     showError: false
   };
 
@@ -65,7 +74,19 @@ class Form extends React.Component {
     ) {
       daysViewing.push(i);
     }
-    return this.setState({ daysViewing });
+    return this.setState({ daysViewing }, () => this.getMonths(daysViewing));
+  };
+
+  getMonths = days => {
+    const months = [];
+    days.map(day => {
+      const monthOfDay = moment(day).format("MMM");
+      if (months.indexOf(monthOfDay) === -1) {
+        months.push(monthOfDay);
+      }
+      return null;
+    });
+    return this.setState({ months });
   };
 
   toggleCalendar() {
@@ -158,14 +179,19 @@ class Form extends React.Component {
               </Button>
             </Grid>
           </form>
-          {!!calendarOn &&
-            daysViewing.map(day => {
-              // gonna have to return it by months??
-              return <div>
-                Hello, moment({moment(day).calendar()});
-              </div>
-            })
-          }
+          {!!calendarOn && (
+            // calendar
+            <Grid
+              container
+              spacing={0}
+              alignItems="center"
+              className={classes.calendar}
+            >
+              {daysViewing.map((day, i) => (
+                <Day day={moment(day).format("YYYY-MM-DD")} key={i} />
+              ))}
+            </Grid>
+          )}
           {!!showError && <div>Please enter a valid country code.</div>}
         </Paper>
       </div>
