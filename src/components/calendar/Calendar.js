@@ -18,7 +18,6 @@ const styles = theme => ({
   }
 });
 
-
 class Calendar extends React.Component {
   state = {
     daysByMonth: []
@@ -53,24 +52,41 @@ class Calendar extends React.Component {
         .format("YYYY-MM-DD");
 
       if (i === 0) {
+        const endFirstMonth = moment(days[days.length - 1])
+          .endOf("week")
+          .format("YYYY-MM-DD");
+
+        console.log(endFirstMonth);
         // take the first day --> get start of week
         for (
           let i = moment(startDate);
           i > moment(invalidStartDate);
           i = moment(i).subtract(1, "day")
         ) {
-          days.unshift(moment(i).format("YYYY-MM-DD"));
+          days.unshift("invalid date");
+        }
+        for (
+          let i = moment(days[days.length - 1]);
+          i < moment(endFirstMonth);
+          i = moment(i).add(1, "day")
+        ) {
+          days.push("invalid date");
         }
       }
 
       if (i === monthsIn.length - 1) {
+        const startLastMonth = moment(days[0])
+        .startOf("week")
+        .format("YYYY-MM-DD");
+
+        console.log(startLastMonth);
         // take last day ---> get end of week
         for (
           let i = moment(endDate);
-          i <= moment(invalidEndDate);
+          i < moment(invalidEndDate);
           i = moment(i).add(1, "day")
         ) {
-          days.push(moment(i).format("YYYY-MM-DD"));
+          days.push("invalid date");
         }
       }
       monthOfDays.push(days);
