@@ -13,6 +13,12 @@ const styles = theme => ({
   }
 });
 
+// get start of week from start day
+    // get end of week from end day
+    // isWeekend
+    // isWeekday
+    // isInvaid
+
 const Day = ({ day, classes }) => (
   <Grid item>
     <div className={classes.day}>{moment(day).format("ddd DD")}</div>

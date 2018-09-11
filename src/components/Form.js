@@ -8,7 +8,7 @@ import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 
-import Day from "./calendar/Day";
+import Calendar from "./calendar/Calendar";
 
 const styles = theme => ({
   layout: {
@@ -72,7 +72,7 @@ class Form extends React.Component {
       i < moment(endDate);
       i = moment(i).add(1, "day")
     ) {
-      daysViewing.push(i);
+      daysViewing.push(moment(i).format('YYYY-MM-DD'));
     }
     return this.setState({ daysViewing }, () => this.getMonths(daysViewing));
   };
@@ -80,7 +80,7 @@ class Form extends React.Component {
   getMonths = days => {
     const months = [];
     days.map(day => {
-      const monthOfDay = moment(day).format("MMM");
+      const monthOfDay = moment(day).format("MM");
       if (months.indexOf(monthOfDay) === -1) {
         months.push(monthOfDay);
       }
@@ -110,6 +110,7 @@ class Form extends React.Component {
       daysLength,
       countryCode,
       calendarOn,
+      months,
       daysViewing,
       showError
     } = this.state;
@@ -181,16 +182,7 @@ class Form extends React.Component {
           </form>
           {!!calendarOn && (
             // calendar
-            <Grid
-              container
-              spacing={0}
-              alignItems="center"
-              className={classes.calendar}
-            >
-              {daysViewing.map((day, i) => (
-                <Day day={moment(day).format("YYYY-MM-DD")} key={i} />
-              ))}
-            </Grid>
+            <Calendar months={months} daysViewing={daysViewing} />
           )}
           {!!showError && <div>Please enter a valid country code.</div>}
         </Paper>
