@@ -31,63 +31,51 @@ class Calendar extends React.Component {
         nextProps.months &&
         nextProps.months.length >= 1
       ) {
-        this.makeMonths(nextProps.months, nextProps.daysViewing);
+        this.makeMonths(
+          nextProps.months,
+          nextProps.daysViewing
+        );
       }
     }
   }
 
-  makeMonths(monthsIn, daysIn) {
+  makeMonths(start, end, monthsIn, daysIn) {
     const monthOfDays = [];
     for (let i = 0; i < monthsIn.length; ++i) {
+      // break into array of days in month selected
       const days = daysIn.filter(day => day.split("-")[1] === monthsIn[i]);
 
-      const startDate = moment(days[0]).format("YYYY-MM-DD");
-      const invalidStartDate = moment(days[0])
+      const startOfMonth = moment(days[0]).startOf("day");
+      const endOfMonth = moment(days[days.length - 1]).endOf("day");
+
+      const invalidStartOfMonth = moment(startOfMonth)
         .startOf("week")
-        .format("YYYY-MM-DD");
-
-      const endDate = moment(days[days.length]).format("YYYY-MM-DD");
-      const invalidEndDate = moment(days[days.length])
+        .startOf("day");
+      const invalidEndOfMonth = moment(endOfMonth)
         .endOf("week")
-        .format("YYYY-MM-DD");
+        .endOf("day");
+      console.log(
+        "invalid Dates",
+        moment(invalidStartOfMonth).format("YYYY-MM-DD"),
+        moment(invalidEndOfMonth).format("YYYY-MM-DD")
+      );
 
-      if (i === 0) {
-        const endFirstMonth = moment(days[days.length - 1])
-          .endOf("week")
-          .format("YYYY-MM-DD");
-
-        console.log(endFirstMonth);
-        // take the first day --> get start of week
-        for (
-          let i = moment(startDate);
-          i > moment(invalidStartDate);
-          i = moment(i).subtract(1, "day")
-        ) {
-          days.unshift("invalid date");
-        }
-        for (
-          let i = moment(days[days.length - 1]);
-          i < moment(endFirstMonth);
-          i = moment(i).add(1, "day")
-        ) {
-          days.push("invalid date");
-        }
+      // unshift invalid dates while invalid start is less than actual start
+      for (
+        let i = moment(invalidStartOfMonth);
+        i < moment(startOfMonth);
+        i = moment(i).add(1, "day")
+      ) {
+        days.unshift("invalid date");
       }
 
-      if (i === monthsIn.length - 1) {
-        const startLastMonth = moment(days[0])
-        .startOf("week")
-        .format("YYYY-MM-DD");
-
-        console.log(startLastMonth);
-        // take last day ---> get end of week
-        for (
-          let i = moment(endDate);
-          i < moment(invalidEndDate);
-          i = moment(i).add(1, "day")
-        ) {
-          days.push("invalid date");
-        }
+      // push invalid dates while invalid end is greater than actual end
+      for (
+        let i = moment(invalidEndOfMonth);
+        i > moment(endOfMonth);
+        i = moment(i).subtract(1, "day")
+      ) {
+        days.push("invalid date");
       }
       monthOfDays.push(days);
     }
@@ -95,7 +83,7 @@ class Calendar extends React.Component {
   }
 
   render() {
-    const { classes, months, daysViewing } = this.props;
+    const { months, daysViewing, classes } = this.props;
     let monthsReady = false;
 
     // TODO: real loading state
