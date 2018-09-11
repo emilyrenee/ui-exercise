@@ -1,20 +1,23 @@
 import React from "react";
-import moment from "moment";
+import moment, { invalid } from "moment";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Grid from "@material-ui/core/Grid";
 
 import Day from "./Day";
 
-const styles = {
+const styles = theme => ({
   calendar: {
     margin: "2rem 0"
+  },
+  headerDay: {
+    width: "3.5rem",
+    height: "1rem",
+    margin: 0,
+    padding: theme.spacing.unit,
+    border: "1px solid grey"
   }
-};
+});
 
-
-// TODO:
-// for each month
-// make header (S, M, T, W, Th, F, S)
 
 class Calendar extends React.Component {
   state = {
@@ -23,7 +26,6 @@ class Calendar extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props !== nextProps) {
-      console.log(nextProps);
       if (
         nextProps.daysViewing &&
         nextProps.daysViewing.length >= 1 &&
@@ -39,10 +41,40 @@ class Calendar extends React.Component {
     const monthOfDays = [];
     for (let i = 0; i < monthsIn.length; ++i) {
       const days = daysIn.filter(day => day.split("-")[1] === monthsIn[i]);
-      console.log("days", days);
+
+      const startDate = moment(days[0]).format("YYYY-MM-DD");
+      const invalidStartDate = moment(days[0])
+        .startOf("week")
+        .format("YYYY-MM-DD");
+
+      const endDate = moment(days[days.length]).format("YYYY-MM-DD");
+      const invalidEndDate = moment(days[days.length])
+        .endOf("week")
+        .format("YYYY-MM-DD");
+
+      if (i === 0) {
+        // take the first day --> get start of week
+        for (
+          let i = moment(startDate);
+          i > moment(invalidStartDate);
+          i = moment(i).subtract(1, "day")
+        ) {
+          days.unshift(moment(i).format("YYYY-MM-DD"));
+        }
+      }
+
+      if (i === monthsIn.length - 1) {
+        // take last day ---> get end of week
+        for (
+          let i = moment(endDate);
+          i <= moment(invalidEndDate);
+          i = moment(i).add(1, "day")
+        ) {
+          days.push(moment(i).format("YYYY-MM-DD"));
+        }
+      }
       monthOfDays.push(days);
     }
-    console.log(monthOfDays);
     this.setState({ daysByMonth: monthOfDays });
   }
 
@@ -71,6 +103,13 @@ class Calendar extends React.Component {
             className={classes.calendar}
             key={i}
           >
+            <div className={classes.headerDay}>S</div>
+            <div className={classes.headerDay}>M</div>
+            <div className={classes.headerDay}>T</div>
+            <div className={classes.headerDay}>W</div>
+            <div className={classes.headerDay}>Th</div>
+            <div className={classes.headerDay}>F</div>
+            <div className={classes.headerDay}>S</div>
             {month.map((day, j) => (
               <Day day={moment(day).format("YYYY-MM-DD")} key={j} />
             ))}

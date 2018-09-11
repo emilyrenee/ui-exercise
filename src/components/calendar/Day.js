@@ -5,7 +5,7 @@ import moment from "moment";
 
 const styles = theme => ({
   day: {
-    width: "5rem",
+    width: "3.5rem",
     height: "3rem",
     margin: 0,
     padding: theme.spacing.unit,
@@ -21,7 +21,7 @@ const styles = theme => ({
 
 const Day = ({ day, classes }) => (
   <Grid item>
-    <div className={classes.day}>{moment(day).format("ddd DD")}</div>
+    <div className={classes.day}>{moment(day).format("YYYY-MM-DD dd")}</div>
   </Grid>
 );
 
