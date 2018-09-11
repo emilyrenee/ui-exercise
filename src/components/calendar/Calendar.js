@@ -39,7 +39,7 @@ class Calendar extends React.Component {
     }
   }
 
-  makeMonths(start, end, monthsIn, daysIn) {
+  makeMonths(monthsIn, daysIn) {
     const monthOfDays = [];
     for (let i = 0; i < monthsIn.length; ++i) {
       // break into array of days in month selected
