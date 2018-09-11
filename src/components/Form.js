@@ -8,6 +8,8 @@ import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 
+import Calendar from "./calendar/Calendar";
+
 const styles = theme => ({
   layout: {
     width: "auto",
@@ -35,6 +37,12 @@ const styles = theme => ({
   field: {
     margin: theme.spacing.unit,
     width: 300
+  },
+  button: {
+    marginTop: "3rem"
+  },
+  calendar: {
+    marginTop: "2rem"
   }
 });
 
@@ -46,6 +54,7 @@ class Form extends React.Component {
     countryCode: "",
     calendarOn: false,
     daysViewing: [],
+    months: [],
     showError: false
   };
 
@@ -56,16 +65,28 @@ class Form extends React.Component {
   };
 
   getDays = () => {
-    const { startDate, endDate, daysLength } = this.state;
-    const daysViewing = new Array(daysLength).fill();
+    const { startDate, endDate } = this.state;
+    const daysViewing = [];
     for (
       let i = moment(startDate);
-      i < moment(endDate);
+      i <= moment(endDate);
       i = moment(i).add(1, "day")
     ) {
-      daysViewing.push(i.calendar());
+      daysViewing.push(moment(i).format('YYYY-MM-DD'));
     }
-    return this.setState({ daysViewing });
+    return this.setState({ daysViewing }, () => this.getMonths(daysViewing));
+  };
+
+  getMonths = days => {
+    const months = [];
+    days.map(day => {
+      const monthOfDay = moment(day).format("MM");
+      if (months.indexOf(monthOfDay) === -1) {
+        months.push(monthOfDay);
+      }
+      return null;
+    });
+    return this.setState({ months });
   };
 
   toggleCalendar() {
@@ -89,6 +110,8 @@ class Form extends React.Component {
       daysLength,
       countryCode,
       calendarOn,
+      months,
+      daysViewing,
       showError
     } = this.state;
     const validCodes = countries().getCodes();
@@ -157,7 +180,13 @@ class Form extends React.Component {
               </Button>
             </Grid>
           </form>
-          {!!calendarOn && <div>Hello, calendar!</div>}
+          {!!calendarOn && (
+            // calendar
+            <Calendar
+              months={months}
+              daysViewing={daysViewing}
+            />
+          )}
           {!!showError && <div>Please enter a valid country code.</div>}
         </Paper>
       </div>
