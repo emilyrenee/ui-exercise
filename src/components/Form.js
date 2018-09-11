@@ -69,7 +69,7 @@ class Form extends React.Component {
     const daysViewing = [];
     for (
       let i = moment(startDate);
-      i < moment(endDate);
+      i <= moment(endDate);
       i = moment(i).add(1, "day")
     ) {
       daysViewing.push(moment(i).format('YYYY-MM-DD'));
@@ -182,7 +182,10 @@ class Form extends React.Component {
           </form>
           {!!calendarOn && (
             // calendar
-            <Calendar months={months} daysViewing={daysViewing} />
+            <Calendar
+              months={months}
+              daysViewing={daysViewing}
+            />
           )}
           {!!showError && <div>Please enter a valid country code.</div>}
         </Paper>
