@@ -57,7 +57,10 @@ class Calendar extends React.Component {
     const monthOfDays = [];
     for (let i = 0; i < monthsIn.length; ++i) {
       // break into array of days in month selected
-      const days = daysIn.filter(day => day.split("-")[1] === monthsIn[i]);
+      const days = daysIn.filter(day => {
+        const yearMonth = day.substring(0, day.length - 3);
+        return yearMonth === monthsIn[i]}
+      );
 
       const startOfMonth = moment(days[0]).startOf("day");
       const endOfMonth = moment(days[days.length - 1]).endOf("day");

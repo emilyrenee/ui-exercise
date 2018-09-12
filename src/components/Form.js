@@ -71,7 +71,7 @@ class Form extends React.Component {
     const daysViewing = [];
     for (
       let i = moment(startDate);
-      i <= moment(endDate);
+      i < moment(endDate);
       i = moment(i).add(1, "day")
     ) {
       daysViewing.push(moment(i).format("YYYY-MM-DD"));
@@ -82,12 +82,13 @@ class Form extends React.Component {
   getMonths = days => {
     const months = [];
     days.map(day => {
-      const monthOfDay = moment(day).format("MM");
+      const monthOfDay = moment(day).format("YYYY-MM");
       if (months.indexOf(monthOfDay) === -1) {
         months.push(monthOfDay);
       }
       return null;
     });
+    console.log('months', months);
     return this.setState({ months });
   };
 
