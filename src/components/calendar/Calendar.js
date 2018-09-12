@@ -95,9 +95,10 @@ class Calendar extends React.Component {
     const { months, daysViewing, classes } = this.props;
     let monthsReady = false;
 
-    const getHeading = month =>
-      // get middle, always valid
-      moment(month[(month.length - 1) / 2]).format("MMMM YYYY");
+    const getHeading = month => {
+      const validDays = month.filter(day => day !== 'invalid date');
+      return moment(validDays[0]).format("MMMM YYYY");
+    }
 
     // TODO: real loading state
     if (
@@ -123,7 +124,7 @@ class Calendar extends React.Component {
             <hr className={classes.bar} />
             <div className={classes.headerRow}>
               <Typography variant="subheading" gutterBottom>
-                {getHeading(month)}
+               {getHeading(month)}
               </Typography>
             </div>
             <div className={classes.headerDay}>S</div>
