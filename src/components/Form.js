@@ -88,7 +88,6 @@ class Form extends React.Component {
       }
       return null;
     });
-    console.log('months', months);
     return this.setState({ months });
   };
 
