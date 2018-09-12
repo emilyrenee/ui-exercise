@@ -1,4 +1,4 @@
-## UI Calender Exercise
+## UI Calendar Exercise
 
 ### Requirements
 Node 10.1.0
