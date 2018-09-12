@@ -1,6 +1,7 @@
 import React from "react";
 import countries from "country-list";
 import moment from "moment";
+
 import withStyles from "@material-ui/core/styles/withStyles";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
@@ -39,7 +40,8 @@ const styles = theme => ({
     width: 300
   },
   button: {
-    marginTop: "3rem"
+    marginTop: "3rem",
+    marginBottom: "3rem"
   },
   calendar: {
     marginTop: "2rem"
@@ -72,7 +74,7 @@ class Form extends React.Component {
       i <= moment(endDate);
       i = moment(i).add(1, "day")
     ) {
-      daysViewing.push(moment(i).format('YYYY-MM-DD'));
+      daysViewing.push(moment(i).format("YYYY-MM-DD"));
     }
     return this.setState({ daysViewing }, () => this.getMonths(daysViewing));
   };
@@ -175,19 +177,23 @@ class Form extends React.Component {
                   }
                 }}
               >
-                {/* if calendar is already present, update calendar */}
-                View Calendar
+                {calendarOn ? "Update Calendar" : "View Calendar"}
               </Button>
             </Grid>
           </form>
-          {!!calendarOn && (
-            // calendar
-            <Calendar
-              months={months}
-              daysViewing={daysViewing}
-            />
+          {calendarOn && <Calendar months={months} daysViewing={daysViewing} />}
+          {showError && (
+            <Grid
+              container
+              direction="row"
+              justify="flex-end"
+              alignItems="center"
+            >
+              <Typography variant="body2" color="secondary">
+                Please enter a valid country code.
+              </Typography>
+            </Grid>
           )}
-          {!!showError && <div>Please enter a valid country code.</div>}
         </Paper>
       </div>
     );

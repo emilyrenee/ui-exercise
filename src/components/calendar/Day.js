@@ -1,28 +1,40 @@
 import React from "react";
-import withStyles from "@material-ui/core/styles/withStyles";
-import Grid from "@material-ui/core/Grid";
 import moment from "moment";
+import classnames from "classnames";
 
-const styles = theme => ({
-  day: {
-    width: "3.5rem",
-    height: "3rem",
-    margin: 0,
-    padding: theme.spacing.unit,
-    border: "1px solid grey"
-  }
-});
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
 
-// get start of week from start day
-    // get end of week from end day
-    // isWeekend
-    // isWeekday
-    // isInvaid
+import "./Day.css";
 
-const Day = ({ day, classes }) => (
-  <Grid item>
-    <div className={classes.day}>{moment(day).format("YYYY-MM-DD dd")}</div>
-  </Grid>
-);
+const Day = ({ day }) => {
+  const isInvalid = day => day === "Invalid date";
+  const isWeekend = day => {
+    const dayOfWeek = moment(day).format("dd");
+    if (dayOfWeek === "Sa" || dayOfWeek === "Su") return true;
+    return false;
+  };
+  const isWeekday = day => {
+    const dayOfWeek = moment(day).format("dd");
+    if (dayOfWeek !== "Sa" && dayOfWeek !== "Su") return true;
+    return false;
+  };
 
-export default withStyles(styles)(Day);
+  return (
+    <Grid item>
+      <div
+        className={classnames("day", {
+          invalid: isInvalid(day),
+          weekend: isWeekend(day),
+          weekday: isWeekday(day)
+        })}
+      >
+        <Typography variant="caption">
+          {isInvalid(day) ? "" : moment(day).format("D")}
+        </Typography>
+      </div>
+    </Grid>
+  );
+};
+
+export default Day;

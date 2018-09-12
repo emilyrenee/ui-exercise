@@ -1,6 +1,8 @@
 import React from "react";
-import moment, { invalid } from "moment";
+import moment from "moment";
+
 import withStyles from "@material-ui/core/styles/withStyles";
+import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 
 import Day from "./Day";
@@ -9,12 +11,27 @@ const styles = theme => ({
   calendar: {
     margin: "2rem 0"
   },
+  headerRow: {
+    width: "100%",
+    textAlign: "center"
+  },
+  bar: {
+    width: "100%",
+    marginBottom: ".35rem",
+    marginRight: "1.85rem"
+  },
   headerDay: {
     width: "3.5rem",
     height: "1rem",
     margin: 0,
     padding: theme.spacing.unit,
-    border: "1px solid grey"
+    border: "1px solid #b2bec3",
+    textAlign: "center",
+    color: "#636e72",
+    [theme.breakpoints.down(600 + theme.spacing.unit * 3 * 2)]: {
+      width: "1.3rem",
+      height: "1rem"
+    }
   }
 });
 
@@ -31,10 +48,7 @@ class Calendar extends React.Component {
         nextProps.months &&
         nextProps.months.length >= 1
       ) {
-        this.makeMonths(
-          nextProps.months,
-          nextProps.daysViewing
-        );
+        this.makeMonths(nextProps.months, nextProps.daysViewing);
       }
     }
   }
@@ -54,11 +68,6 @@ class Calendar extends React.Component {
       const invalidEndOfMonth = moment(endOfMonth)
         .endOf("week")
         .endOf("day");
-      console.log(
-        "invalid Dates",
-        moment(invalidStartOfMonth).format("YYYY-MM-DD"),
-        moment(invalidEndOfMonth).format("YYYY-MM-DD")
-      );
 
       // unshift invalid dates while invalid start is less than actual start
       for (
@@ -86,6 +95,11 @@ class Calendar extends React.Component {
     const { months, daysViewing, classes } = this.props;
     let monthsReady = false;
 
+    const getHeading = month => {
+      const validDays = month.filter(day => day !== 'invalid date');
+      return moment(validDays[0]).format("MMMM YYYY");
+    }
+
     // TODO: real loading state
     if (
       daysViewing &&
@@ -107,6 +121,12 @@ class Calendar extends React.Component {
             className={classes.calendar}
             key={i}
           >
+            <hr className={classes.bar} />
+            <div className={classes.headerRow}>
+              <Typography variant="subheading" gutterBottom>
+               {getHeading(month)}
+              </Typography>
+            </div>
             <div className={classes.headerDay}>S</div>
             <div className={classes.headerDay}>M</div>
             <div className={classes.headerDay}>T</div>
